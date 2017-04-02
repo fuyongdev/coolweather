@@ -1,6 +1,7 @@
 package com.example.fuyong.coolweather;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -75,13 +76,16 @@ public class ChooseAreaFragment extends Fragment {
         mListView = (ListView) view.findViewById(R.id.list_view);
         mAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, mDataList);
         mListView.setAdapter(mAdapter);
-        queryProvinces();
+//        queryProvinces();
         return view;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if(mDataList.isEmpty()){
+            queryProvinces();
+        }
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -91,6 +95,12 @@ public class ChooseAreaFragment extends Fragment {
                 } else if (mCurrentLevel == LEVEL_CITY) {
                     mSelectedCity = mCityList.get(position);
                     queryCounties();
+                }else if(mCurrentLevel == LEVEL_COUNTY){
+                    String weatherId = mCountyList.get(position).getWeatherId();
+                    Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                    intent.putExtra("weather_id", weatherId);
+                    startActivity(intent);
+                    getActivity().finish();
                 }
             }
         });
